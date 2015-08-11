@@ -1,0 +1,95 @@
+.jquery-panels
+{
+    box-sizing: border-box;
+    position: relative;
+    -webkit-user-select: none;  
+    -moz-user-select: none;    
+    -ms-user-select: none;      
+    user-select: none;
+}
+.jquery-panels button.add
+{
+    display: block;
+}
+.jquery-panels .panel header h3
+{
+    color: #fff;
+    font-family: Helvetica, Lao Ui, Arial, sans-serif;
+    text-align: center;
+}
+.jquery-panels .panel header
+{
+    border: 1px solid #807B7B;
+    text-shadow: 0 1px 0 #807B7B;
+    background: #C8C8C8;
+    background: -webkit-linear-gradient(top, #C8C8C8 0%, #8C8C8C 100%);
+    background: -moz-linear-gradient(top, #C8C8C8 0%, #8C8C8C 100%);
+    background: linear-gradient(top, #C8C8C8 0%, #8C8C8C 100%);
+    border-radius: 5px 5px 0 0;
+    background-color: red;
+    padding: 8px 8px 18px 8px;
+    cursor: move;
+}
+    
+}
+.jquery-panels > button:first-child
+{
+    display:block;
+}
+.jquery-panels.collection .panel
+{
+    position: relative;
+    overflow: visible;
+    display: inline-block;
+    vertical-align: top;
+    margin-bottom: 20px;
+}
+.jquery-panels .panel .jp-container
+{
+    background: #C8C8C8;
+    background: -webkit-linear-gradient(top, #E5E5E5 10%, #F7F7F7 100%);
+    background: -moz-linear-gradient(top, #E5E5E5 10%, #F7F7F7 100%);
+    background: linear-gradient(top, #E5E5E5 10%, #F7F7F7 100%);
+    padding: 10px;
+    border-radius: 0 0 5px 5px;
+    border: 1px solid #9A9;
+    border-top: none;
+}
+.jquery-panels .panel .controls button
+{
+    min-width: 30px;
+    height: 30px;
+    outline: none;
+    position: absolute;
+}
+.jquery-panels .panel .controls button.colpse
+{
+    color: #999;
+    background: #C8C8C8;
+    background: -webkit-linear-gradient(bottom, #E5E5E5 10%, #ffffff 100%);
+    background: -moz-linear-gradient(bottom, #E5E5E5 10%, #ffffff 100%);
+    background: linear-gradient(bottom, #E5E5E5 10%, #ffffff 100%);
+    top: 7px;
+    left: 7px;
+}
+.jquery-panels .panel .controls button.remove
+{
+    padding: 5px;
+    min-width: 25px;
+    right: 7px;
+    top: 7px;
+}
+
+.jquery-panels .panel .jp-container input
+{
+    height: 28px;
+}
+.jquery-panels .panel .jp-container input,
+.jquery-panels .panel .jp-container select,
+.jquery-panels .panel .jp-container textarea 
+{
+    box-sizing: border-box;
+    display: block;
+    margin: 0 auto 10px auto;
+    width: 100%;
+}
