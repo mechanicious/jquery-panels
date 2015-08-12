@@ -46,26 +46,36 @@ Panel.prototype.defineButtonSelectors = function()
   this.removeBtnSelector  = this.collectionSelector + ' > .panel > .controls > button.remove';
 }
 
-// TODO: switch at overlap, improve position guessing, fix the element replacement
+// TODO: improve treshold trigger, cleanup
 Panel.prototype.registerDragging = function(panel)
 {
   function _log(message) {
       debugging && console.log(message);
     }
 
-    var debugging = false,
+    var debugging = true,
         _this = this;
     var onmousedown = function(e) {
-        _log('mousedown registered')
+        if(e.target !== e.data._header.get(0)) return;
+        _log(['mousedown registered with args', arguments])
         _log(['mousedown event', e])
         _log(['start conditions', e.target.style.top])
         var _event = e,
-            _header = $(_event.target),
+            _header = _event.data._header,
             _panel = $(_event.target).parents('.panel').first();
+            _panel = _panel.attr('class', 'panel span4');
+            _panel.css({'z-index': -10}),
+            _bullet = new jQuery,
+            _mouseEnterRegistered = false;
+
+        var _treshold = 1.2;
+            _treshold = 1/_treshold;
 
         if(! _panel.offset() ) return;
         var _collectionContainer = _panel.parents('.jquery-panels').first(),
             _panelCollectionIndex = _collectionContainer.find(_panel).index(),
+            _panelCollection = _collectionContainer.find('.panel');
+            _panelForeignCollection = _panelCollection.not(_panel); 
             whileTarget = document,
             endTarget = whileTarget;
 
@@ -75,9 +85,11 @@ Panel.prototype.registerDragging = function(panel)
             // remove placeholder
             // snap
             _panel.find('header').attr('class', 'head');
+            _panel.css({'z-index': '-10'});
             $(_header).off('mousedown');
             var _placeholder = _panel.clone(false, false);
               _placeholder.css({display: 'none', opacity: '.3', top: 'auto', left: 'auto'});
+              _placeholder.attr('class', 'panel-placeholder span4');
               _placeholder.find('header').attr('class', 'placeholder');
             if(! _collectionContainer.find('header.placeholder').length)
             _placeholder.insertBefore(_panel);
@@ -90,17 +102,20 @@ Panel.prototype.registerDragging = function(panel)
 
             var initMouse = function () {
               mouse = {
-                offsetX: _panel.offset().left - 20 - _collectionContainer.offset().left,
+                // Used for relative positioning
+                offsetX: _panel.offset().left - parseInt(_panel.css('margin-left')) - _collectionContainer.offset().left,
                 offsetY: _panel.offset().top,
+                // Used to calculate the treshold
                 movementXTotal: 0,
                 movementYTotal: 0
               };
             }
 
-
             _log(['starting at', mouse]);
             initMouse();
             var onmousemove = function(e) {
+              reRegisterSnappingEventHandler();
+              if(_mouseEnterRegistered) onmouseenter(_mouseEnterRegistered);
               _log('mousemove registered');
               mouse.movementXTotal += e.movementX;
               mouse.movementYTotal += e.movementY;
@@ -114,52 +129,112 @@ Panel.prototype.registerDragging = function(panel)
               });
               _placeholder.css({display: 'inline-block'});
               _log(mouse.movementXTotal);
-
-              if(! _panel.data('jp-removed') && (
-                mouse.movementXTotal > _panel.width()       / 1.25
-                || mouse.movementYTotal > _panel.height()   / 1.25
-                || mouse.movementXTotal < -(_panel.width()  / 1.25)
-                || mouse.movementYTotal < -(_panel.height() / 1.25) ))
-              {
-                _log('snapping');
-                var _snapPanel = _panel.clone();
-
-                // Either move the panel one position further in the sequence of fellow
-                // elements or one position back
-                if(mouse.movementXTotal > _panel.width() / 2 || mouse.movementYTotal > _panel.height() / 2)
-                  _snapPanel.insertAfter(_collectionContainer.find('li').get(_panelCollectionIndex+1));
-                else _snapPanel.insertBefore(_collectionContainer.find('li').get(_panelCollectionIndex-2));
-
-                initMouse();
-                _panel.detach();
-                _panel.data('jp-removed', true);
-                _placeholder.detach();
-                _snapPanel.css({position: 'relative', top: 0, left: 0});
-                _this.definePanelCollapseButtonHandler(_snapPanel);
-                _this.definePanelRemoveButtonHandler(_snapPanel);
-                _this.registerDragging(_snapPanel);
-              }
             
               _log([_panel.css('top'), mouse.offsetY, mouse.offsetX]);
             };
+
+            var onmouseenter = function(e)
+            {
+              // whileTarget.removeEventListener('mousemove', onmousemove);
+              // if($(e.target).parents('.panel').first().attr('class') !== _panel.attr('class')) return;
+
+              _log(['mouseenter registered', e.target]);
+              var bullet = $(e.target).parents('.panel').first(), bulletFellow, 
+              bulletIndex, bulletClone = bullet.clone(), 
+              trigger = _panel, triggerFellow, triggerIndex, triggerClone = _panel.clone();
+              if(bullet.get(0) === trigger.get(0)) return console.log(['wrong bullet', bullet.get(0)]);
+              _bullet.css({'opacity': 1})
+              _bullet = bullet;
+
+              if(_mouseEnterRegistered)
+              {
+                mouse.movementXTotal += e.movementX;
+                mouse.movementYTotal += e.movementY;
+              }
+
+              trigger.css({'opacity': '.4'});
+              _bullet.css({'opacity': '.4'});
+              _mouseEnterRegistered = e;
+              if(!(mouse.movementXTotal > _panel.width()    / _treshold
+                || mouse.movementYTotal > _panel.height()   / _treshold
+                || mouse.movementXTotal < -(_panel.width()  / _treshold)
+                || mouse.movementYTotal < -(_panel.height() / _treshold) ))
+                return;
+              var calculateElements = function()
+              {
+                bulletFellow = bullet.prev();
+                bulletIndex = _panelCollection.find(_bullet).index();
+                triggerFellow = trigger.prev().prev();
+                triggerIndex = _panelCollection.find(trigger).index();
+              }
+
+              calculateElements();
+              // when trigger has no fellows
+              if( ! triggerFellow.length)
+              {
+                // 
+              }
+              else
+              {
+                triggerClone.insertBefore(_bullet);
+                bullet.insertAfter(trigger);
+                trigger.detach();
+                _placeholder.detach()
+              }
+
+              bullet.css({position: 'relative', top: 'auto', left: 'auto', 'z-index': 0, 'opacity': '1'});
+              triggerClone.css({position: 'relative', top: 'auto', left: 'auto', 'z-index': 0,'opacity': '1'});
+              clearEventListeners();
+               _this.definePanelCollapseButtonHandler(triggerClone);
+               _this.definePanelRemoveButtonHandler(triggerClone);
+              _this.registerDragging(triggerClone);
+            };
+
             var onmouseup = function(e) {
+              _panel.css({'z-index': 0});
               _placeholder.detach();
-              _panel.css({position: 'relative', top: 0, left: 0});
-              whileTarget.removeEventListener('mousemove', onmousemove);
-              endTarget.removeEventListener('mouseup', onmouseup);
+              _panel.css({position: 'relative', top: 'auto', left: 'auto', 'z-index': 0, 'opacity': '1'});
+              _bullet.css({position: 'relative', top: 'auto', left: 'auto', 'z-index': 0, 'opacity': '1'});
+              clearEventListeners();
+              _header.off('mousedown', _event.data._self);
               _log('mouseup registered')
               _log(mouse);
               _this.registerDragging(panel);
               return mouse;
             };
 
+            var clearEventListeners = function() {
+              whileTarget.removeEventListener('mousemove', onmousemove);
+              endTarget.removeEventListener('mouseup', onmouseup);
+              _panelCollection.each(function(i, e) {
+                e.removeEventListener('mouseover', onmouseenter);
+              });
+            }
+
+            var reRegisterSnappingEventHandler = function() {
+              _panelCollection.each(function(i, e) {
+                e.removeEventListener('mouseover', onmouseenter);
+              });
+              _log(['registering mouseenter for', _panelCollection]);
+              _panelCollection.each(function(i, e) {
+                e.addEventListener('mouseover', onmouseenter);
+              });
+            };
+
         _log(['registering mousemove for', whileTarget]);
         whileTarget.addEventListener('mousemove', onmousemove);
+
+        _log(['registering mouseenter for', _panelCollection]);
+        _panelCollection.each(function(i, e) {
+          e.addEventListener('mouseover', onmouseenter);
+        });
+
         _log(['registering mouseup for', endTarget]);
         endTarget.addEventListener('mouseup', onmouseup);
       };
+  var _header = panel.find('header').first(); 
+  _header.on('mousedown', null, {_self: onmousedown, _header: _header}, onmousedown);
   
-  panel.find('header').on('mousedown', onmousedown);
   _log(['registering mousedown for', panel]);
 }
 
@@ -202,7 +277,7 @@ Panel.prototype.definePanelRemoveButtonHandler = function(panel)
   var panel = panel || this.panels,
       _this = this;
   panel.find('button.remove').attr('class', 'btn btn-warning remove');
-  panel.find('button.remove').text('T');
+  panel.find('button.remove').text('×');
   panel.find('button.remove').on('click', function(e)
   {
     var _button = $(this),
@@ -251,6 +326,7 @@ PublicPanel.prototype.onPanelCollapsed = function(callback)
   return this;
 }
 
+
 /**
  * todo
  */
@@ -266,6 +342,14 @@ PublicPanel.prototype.onPanelInputEdited = function(callback)
   };
 
   inputCollection.on('blur', eventHandler);
+}
+
+PublicPanel.prototype.toJson = function() {
+
+}
+
+PublicPanel.prototype.buildFromJson = function(json) {
+
 }
 
 // implement dragging panels around
