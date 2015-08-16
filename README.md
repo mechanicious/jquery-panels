@@ -3,7 +3,7 @@ Supersedes v0.7.3, yet no stable release so far.
 
 # Live demo
 
-[http://mechanicious.github.io/jquery-panels/](Live demo)
+[Live demo](http://mechanicious.github.io/jquery-panels/)
 
 ![](https://github.com/mechanicious/jquery-panels/blob/gh-pages/jpanels0.7.3-gif.gif.gif?raw=true)
 
