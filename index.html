@@ -4,31 +4,26 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title></title>
-	<link rel="stylesheet" href="C:\xampp\htdocs\assets\admin\css\bootstrap.min.css">
-	<link rel="stylesheet" href="C:\xampp\htdocs\assets\admin\css\font-awesome.css">
-	<link rel="stylesheet" href="C:\xampp\htdocs\assets\admin\css\style.css">
-
-	<link rel="stylesheet" href="css/jquery.jquery-panels-0.5.5.css">
+	<!-- for presentation purposes -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/normalize.css">
+
+	<link rel="stylesheet" href="css/jquery.jquery-panels-0.7.3.css">
 	
-	<script src="C:\xampp\htdocs\assets\admin\js\jquery-1.7.2.min.js"></script>
-	
-	<script src="js/jquery.jquery-panels-0.5.5.js"></script>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="js/jquery.jquery-panels-0.7.3.js"></script>
 </head>
 <body>
-	<form action="" method="get" accept-charset="utf-8" style="display:none;">
-		<input value="panels[][panel_id][][title]" name="title" type="text">	
-		<input value="panels[][panel_id][][thumbnail]" name="thumbnail" type="text">	
-		<input value="panels[][panel_id][][description]" name="description" type="text">	
-		<input value="panels[][panel_id][][category_id]" name="language_id" type="number">	
-	</form>
-
 	<div class="container">
 		<div class="span12">
 			<ul class="jquery-panels collection">
 				<button class="btn btn-info add">+</button>
 
+<<<<<<< HEAD
 				<li class="panel span4 blueprint" style="display:none;">
+=======
+				<li class="panel span3 blueprint" style="display:none;">
+>>>>>>> origin/v0.8.3
 					<header>
 						<h3 class="btn-default">Language</h3>
 					<div class="controls">
@@ -72,6 +67,9 @@
 		.onPanelCollapsed(function(panel) {
 			console.log('panel collpased ' + panel.attr('class'));
 		})
+		.onPanelInputEdited(function(e) {
+			console.log(e)
+		});
 	</script>
 </body>
 </html>
