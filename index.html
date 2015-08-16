@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<!-- for presentation purposes -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/normalize.css">
+
+	<link rel="stylesheet" href="css/jquery.jquery-panels-0.7.3.css">
+	
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="js/jquery.jquery-panels-0.7.3.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="span12">
+			<ul class="jquery-panels collection">
+				<button class="btn btn-info add">+</button>
+
+				<li class="panel span3 blueprint" style="display:none;">
+					<header>
+						<h3 class="btn-default">Language</h3>
+					<div class="controls">
+						<button class="btn btn-default colpse">-</button>
+						<button class="btn btn-warning remove">&#215;</button>
+					</div>
+					</header>
+
+					<div class="jp-container btn-default">
+						<input type="text" name="title" placeholder="Title">
+
+						<!-- attach imagepicker -->
+						<select name="candy_id">
+							<option value="1">placeholder 1</option>
+							<option value="2">placeholder 2</option>
+							<option value="3">placeholder 3</option>
+							<option value="4">placeholder 4</option>
+						</select>
+
+						<select name="category_id">
+							<option value="1">placeholder 1</option>
+							<option value="2">placeholder 2</option>
+							<option value="3">placeholder 3</option>
+							<option value="4">placeholder 4</option>
+						</select>
+
+						<textarea type="text" name="description" placeholder="Description..."></textarea>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<script>
+		$('.jquery-panels.collection').first().panel()
+		.onPanelRemoved(function(panel) {
+			console.log('panel removed ' + panel.attr('class'));
+		})
+		.onPanelAdded(function(panel){
+			console.log('panel added ' + panel.attr('class'));
+		})
+		.onPanelCollapsed(function(panel) {
+			console.log('panel collpased ' + panel.attr('class'));
+		})
+		.onPanelInputEdited(function(e) {
+			console.log(e)
+		});
+	</script>
+</body>
+</html>
